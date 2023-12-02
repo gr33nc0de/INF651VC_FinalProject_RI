@@ -372,9 +372,9 @@ async function displayPosts(postsData)
 
 
 //17 PROBLEM RETURNING UNDEFINED
-async function toggleComments(event, postId) 
+function toggleComments(event, postId) 
 {
-    if (!event || !postId) return undefined;
+    if (!event || !postId) return;
 
     event.target.listener = true;
 
@@ -382,12 +382,8 @@ async function toggleComments(event, postId)
     const section = toggleCommentSection(postId);
     const button = toggleCommentButton(postId);
 
-    if (section && button) 
-    {
-        return [section, button];
-    } else {
-        return undefined;
-    }
+    if (section && button) return [section, button];
+    return;
 }
 
 

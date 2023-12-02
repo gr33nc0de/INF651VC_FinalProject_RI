@@ -412,6 +412,7 @@ async function selectMenuChangeEventHandler(event)
 {
     if (!event || !event.target) return undefined;
 
+    console.log(typeof event);
     // Disable the select menu when called 
     const selectMenu = event.target;
     if (selectMenu) 
@@ -433,6 +434,7 @@ async function selectMenuChangeEventHandler(event)
         }
 
         // Return array with userId, posts, and array returned from refreshPosts
+        console.log([userId, posts].concat(refreshPostsArray));
         return [userId, posts].concat(refreshPostsArray);
     } catch (error) {
         console.error('Error in selectMenuChangeEventHandler:', error);

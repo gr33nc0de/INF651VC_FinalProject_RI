@@ -420,7 +420,7 @@ async function refreshPosts(postsData)
 //19 PROBLEM handle change event in dropdown (fetch posts for selected user, refresh posts, return info in array)
 async function selectMenuChangeEventHandler(event) 
 {
-    if (!event || !event.target) return undefined;
+    if (!event) return undefined;
 
     // Rest of your function remains unchanged...
     console.log(typeof event);

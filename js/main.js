@@ -66,7 +66,7 @@ function toggleCommentButton(postId)
     if (!postId) return undefined;
 
     // Select button w/data-post-id attribute = postId
-    const buttonElement = document.querySelector(`button[data-post-id="${postId}"]`);
+    const buttonElement = document.querySelector(`button[data-post-id='${postId}']`);
 
     if (buttonElement) 
     {
@@ -110,7 +110,7 @@ function addButtonListeners()
             // Get postId from button.dataset.postId
             const postId = button.dataset.postId;
 
-            // Check if postId exists & ≠empty string
+            // Check if postId exists & ≠ empty string
             if (postId !== undefined && postId !== '') 
             {
                 button.addEventListener('click', function(event) 
@@ -163,23 +163,30 @@ function createComments(commentsData)
 
     // Loop through the comments
     commentsData.forEach((comment) => {
-        
-        //create article
+        // Create a new DocumentFragment for each iteration
+        const commentFragment = document.createDocumentFragment();
+
+        // article
         const articleElement = document.createElement('article');
 
-        //create h3
+        // h3
         const h3Element = createElemWithText('h3', comment.name);
 
-        // create para w/comment
+        // para w/comment
         const bodyParagraph = createElemWithText('p', comment.body);
 
-        // create para w/linked email
+        // para w/linked email
         const emailParagraph = createElemWithText('p', `From: ${comment.email}`);
 
-        // Append the h3 and paragraphs to the article element
-        articleElement.append(h3Element, bodyParagraph, emailParagraph)
+        // Append h3 and paragraphs to commentFragment
+        commentFragment.appendChild(h3Element);
+        commentFragment.appendChild(bodyParagraph);
+        commentFragment.appendChild(emailParagraph);
 
-        // Append the article element to the fragment
+        // Append commentFragment to article element
+        articleElement.appendChild(commentFragment);
+
+        // Append article element to main fragment
         fragment.appendChild(articleElement);
     });
 
@@ -392,50 +399,46 @@ async function refreshPosts(postsData)
 {
     if (!postsData) return undefined;
 
+    // Remove button listeners (assuming it removes listeners related to post buttons)
     const removeButtons = removeButtonListeners();
 
-    // deleteChildElements of main element
+    // Delete child elements of the main element
     const mainElement = document.querySelector('main');
     const main = deleteChildElements(mainElement);
 
     // Pass posts JSON data to displayPosts to update
     const fragment = await displayPosts(postsData);
 
+    // Add button listeners again after updating posts
     const addButtons = addButtonListeners();
 
-    // Return array of results
+    // Return an array of results
     return [removeButtons, main, fragment, addButtons];
 }
+
 
 //19 PROBLEM handle change event in dropdown (fetch posts for selected user, refresh posts, return info in array)
 async function selectMenuChangeEventHandler(event) 
 {
     if (!event || !event.target) return undefined;
 
+    // Rest of your function remains unchanged...
     console.log(typeof event);
-    // Disable the select menu when called 
     const selectMenu = event.target;
-    if (selectMenu) 
+    if (selectMenu) selectMenu.disabled = true;
+
+    try 
     {
-        selectMenu.disabled = true;
-    }
-
-    try {
-        //if userID exists, set its value otherwise defaults to 1
-        const userId = selectMenu.value || 1;
+        // Ensure userId is returned as a number
+        const userId = parseInt(event?.target?.value) || 1;
         const posts = await getUserPosts(userId);
-
-        // Pass posts JSON to refreshPosts
         const refreshPostsArray = await refreshPosts(posts);
 
-        // Enable the select menu after getting results
-        if (selectMenu) {
-            selectMenu.disabled = false;
-        }
+        if (selectMenu) selectMenu.disabled = false;
 
-        // Return array with userId, posts, and array returned from refreshPosts
-        console.log([userId, posts].concat(refreshPostsArray));
-        return [userId, posts].concat(refreshPostsArray);
+        outputArray = [userId, posts, refreshPostsArray];
+        console.log(typeof outputArray);
+        return outputArray;
     } catch (error) {
         console.error('Error in selectMenuChangeEventHandler:', error);
         throw error;
